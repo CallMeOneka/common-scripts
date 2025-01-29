@@ -18,24 +18,28 @@ fi
 # Получаем текущую ветку
 branch=$(git branch --show-current)
 
-# Проверка, что мы не находимся в master/main ветке
-if [[ "$branch" == "master" || "$branch" == "main" ]]; then
-    print_message "info" "Внимание: Вы находитесь в ветке $branch. Продолжить? (y/n)"
-    read -r answer
-    if [[ "$answer" != "y" ]]; then
-        print_message "info" "Операция отменена"
-        exit 0
-    fi
+# Проверка, что мы НЕ находимся в master/main ветке
+if [ "$branch" = "master" ] || [ "$branch" = "main" ]; then
+    print_message "error" "Нельзя коммитить напрямую в ветку $branch!"
+    exit 1
+fi
+
+print_message "info" "Внимание: Вы находитесь в ветке $branch. 
+Продолжить? (y/n)"
+read -r answer
+if [[ "$answer" != "y" ]]; then
+    print_message "info" "Операция отменена"
+    exit 0
 fi
 
 # Запрашиваем описание изменений
-while true; do
+print_message "info" "Введите описание изменений (не может быть пустым):"
+read -r changes
+
+while [ -z "$changes" ]; do
+    print_message "error" "Описание не может быть пустым. Попробуйте снова."
     print_message "info" "Введите описание изменений (не может быть пустым):"
     read -r changes
-    if [ -n "$changes" ]; then
-        break
-    fi
-    print_message "error" "Описание не может быть пустым. Попробуйте снова."
 done
 
 # Формируем commit message в зависимости от типа ветки
