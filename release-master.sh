@@ -54,9 +54,9 @@ while ! [[ $NEW_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; do
 done
 
 # Выполняем команды
-# git pull
-# npm version $NEW_VERSION
-# git push origin master
-# git push --tags
+git pull
+npm version $NEW_VERSION
+git push origin master
+git push --tags
 
 echo "Новая версия успешно выпущена: $NEW_VERSION"
