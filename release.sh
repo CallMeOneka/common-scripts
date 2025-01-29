@@ -35,6 +35,7 @@ if [[ $CURRENT_VERSION =~ ^([0-9]+\.[0-9]+\.[0-9]+)-dev\.([^\.]+)\.([0-9]+)$ ]];
 
 # Если версия в формате X.Y.Z
 elif [[ $CURRENT_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+  print_message "info" "Создаем новую dev версию по шаблону X.Y.Z-dev.<TASK>.<ITERATION>"
   # Автоматически увеличиваем версию на 1
   IFS='.' read -r -a VERSION_PARTS <<<"$CURRENT_VERSION"
   NEW_BASE_VERSION="${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.$((VERSION_PARTS[2] + 1))"
