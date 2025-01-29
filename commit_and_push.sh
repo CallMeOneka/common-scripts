@@ -24,8 +24,7 @@ if [ "$branch" = "master" ] || [ "$branch" = "main" ]; then
     exit 1
 fi
 
-print_message "info" "Внимание: Вы находитесь в ветке $branch. 
-Продолжить? (y/n)"
+print_message "info" -n "Внимание: Вы находитесь в ветке $branch. Продолжить? (y/n) "
 read -r answer
 if [[ "$answer" != "y" ]]; then
     print_message "info" "Операция отменена"
@@ -33,12 +32,12 @@ if [[ "$answer" != "y" ]]; then
 fi
 
 # Запрашиваем описание изменений
-print_message "info" "Введите описание изменений (не может быть пустым):"
+print_message "info" -n "Введите описание изменений (не может быть пустым): "
 read -r changes
 
 while [ -z "$changes" ]; do
-    print_message "error" "Описание не может быть пустым. Попробуйте снова."
-    print_message "info" "Введите описание изменений (не может быть пустым):"
+    print_message "error" "Описание не может быть пустым!"
+    print_message "info" -n "Введите описание изменений: "
     read -r changes
 done
 
