@@ -1,9 +1,26 @@
 #!/bin/bash
 
+set -e  # Прерывать выполнение при любой ошибке
+
+# Подключаем утилиты
+source "$(dirname "$0")/utils.sh"
+
+# Проверка, что мы находимся в git репозитории
+if ! git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
+    print_message "error" "Скрипт должен выполняться в git репозитории!"
+    exit 1
+fi
+
+# Проверка наличия незакоммиченных изменений
+if ! git diff-index --quiet HEAD --; then
+    print_message "error" "В репозитории есть незакоммиченные изменения!"
+    exit 1
+fi
+
 # Проверка, что мы в ветке master
 if [[ $(git branch --show-current) != "master" ]]; then
-  echo "Ошибка: Этот скрипт должен выполняться только в ветке master!"
-  exit 1
+    print_message "error" "Этот скрипт должен выполняться только в ветке master!"
+    exit 1
 fi
 
 # Получаем текущую версию
