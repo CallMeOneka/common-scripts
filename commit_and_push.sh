@@ -9,10 +9,10 @@ if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
     exit 1
 fi
 
-# Проверка наличия изменений для коммита
-if [ -z "$(git status --porcelain)" ]; then
-    print_message "info" "Нет изменений для коммита"
-    exit 0
+# Проверка что был сделан git add
+if git diff --cached --quiet; then
+    print_message "error" "Нет staged изменений. Сначала выполните 'git add'"
+    exit 1
 fi
 
 # Получаем текущую ветку
@@ -50,7 +50,6 @@ fi
 
 # Создаем коммит
 print_message "info" "Создание коммита..."
-git add .
 git commit -m "$commit_message"
 
 # Проверяем успешность коммита
