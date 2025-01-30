@@ -9,6 +9,12 @@ if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
     exit 1
 fi
 
+# Если передан аргумент ".", выполняем git add .
+if [ "$1" = "." ]; then
+    print_message "info" "Добавление всех изменений..."
+    git add .
+fi
+
 # Проверка что был сделан git add
 if git diff --cached --quiet; then
     print_message "error" "Нет staged изменений. Сначала выполните 'git add'"
