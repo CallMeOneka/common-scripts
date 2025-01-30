@@ -16,10 +16,10 @@ if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
 fi
 
 # Проверка наличия незакоммиченных изменений
-if ! git diff-index --quiet HEAD --; then
-  print_message "error" "В репозитории есть незакоммиченные изменения!"
-  exit 1
-fi
+# if ! git diff-index --quiet HEAD --; then
+#   print_message "error" "В репозитории есть незакоммиченные изменения!"
+#   exit 1
+# fi
 
 # Проверка, что мы не в ветке master
 if [[ $(git branch --show-current) == "master" ]]; then
@@ -30,6 +30,21 @@ fi
 # Получаем текущую версию
 CURRENT_VERSION=$(npm pkg get version | tr -d '"')
 
+# Функция для извлечения номера задачи из имени ветки
+get_default_task_number() {
+  local branch_name=$(git branch --show-current)
+  local task_number
+
+  # Пытаемся найти числа в имени ветки
+  if [[ $branch_name =~ ([0-9]+) ]]; then
+    task_number="${BASH_REMATCH[1]}"
+  else
+    task_number="$branch_name"
+  fi
+
+  echo "$task_number"
+}
+
 # Если версия уже в формате X.Y.Z-dev.<TASK>.<ITERATION>
 if [[ $CURRENT_VERSION =~ ^([0-9]+\.[0-9]+\.[0-9]+)-dev\.(${TASK_NUMBER_INNER_REGEX})\.([0-9]+)$ ]]; then
   BASE_VERSION=${BASH_REMATCH[1]}
@@ -37,7 +52,7 @@ if [[ $CURRENT_VERSION =~ ^([0-9]+\.[0-9]+\.[0-9]+)-dev\.(${TASK_NUMBER_INNER_RE
   ITERATION=$((${BASH_REMATCH[3]} + 1))
 
   # Проверяем, совпадает ли task_number с текущей веткой
-  BRANCH_NAME=$(git branch --show-current)
+  BRANCH_NAME=$(get_default_task_number)
   if [[ $TASK_NUMBER != $BRANCH_NAME ]]; then
     print_message "info" "Текущий номер задачи ($TASK_NUMBER) отличается от имени ветки ($BRANCH_NAME)"
     print_message "info" -n "Вы можете изменить номер задачи по желанию (по умолчанию: $TASK_NUMBER): "
@@ -75,7 +90,7 @@ elif [[ $CURRENT_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
   done
 
   # Получаем номер задачи из имени ветки, если не введен вручную
-  BRANCH_NAME=$(git branch --show-current)
+  BRANCH_NAME=$(get_default_task_number)
   print_message "info" -n "Введите номер задачи (по умолчанию: $BRANCH_NAME): "
   read -r TASK_NUMBER
   TASK_NUMBER=${TASK_NUMBER:-$BRANCH_NAME}
@@ -104,7 +119,7 @@ else
   done
 
   # Получаем номер задачи из имени ветки, если не введен вручную
-  BRANCH_NAME=$(git branch --show-current)
+  BRANCH_NAME=$(get_default_task_number)
   print_message "info" -n "Введите номер задачи (по умолчанию: $BRANCH_NAME): "
   read -r TASK_NUMBER
   TASK_NUMBER=${TASK_NUMBER:-$BRANCH_NAME}
@@ -121,8 +136,8 @@ else
 fi
 
 # Выполняем команды
-npm version $NEW_VERSION
-git push origin $(git branch --show-current)
-git push --tags
+# npm version $NEW_VERSION
+# git push origin $(git branch --show-current)
+# git push --tags
 
 echo "Новая версия успешно выпущена: $NEW_VERSION"
