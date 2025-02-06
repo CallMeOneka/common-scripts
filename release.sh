@@ -136,8 +136,8 @@ else
 fi
 
 # Выполняем команды
-# npm version $NEW_VERSION
-# git push origin $(git branch --show-current)
-# git push --tags
+npm version $NEW_VERSION
+git push origin $(git branch --show-current)
+git push --tags
 
 echo "Новая версия успешно выпущена: $NEW_VERSION"
